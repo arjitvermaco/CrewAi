@@ -1,12 +1,18 @@
 from dotenv import load_dotenv
-
-from crewai import Agent , Task , Crew
+import os
+from crewai import Agent , Task , Crew, LLM
 from langchain_groq import ChatGroq
 
+# pip install langchain_groq crewai crewai-tools python-dotenv
 load_dotenv()
 
 # llm_openAi= ChatOpenAI(model="gpt-4o")
-llm = ChatGroq(model="llama3-8b-8192")
+# llm = ChatGroq(model="llama3-8b-8192")
+llm = LLM(
+    model="llama3-8b-8192",
+    base_url="https://api.groq.com/openai/v1",
+    api_key=os.getenv("GROQ_API_KEY"),
+)
 # print(llm.invoke("Hello, how are you?"))
 
 
@@ -118,7 +124,6 @@ crew = Crew(
     verbose=True
 )
 
-result = crew.kickoff(inputs={"topic": "Artificial Intelligence"})
+result = crew.kickoff(inputs={"topic": "Self Driving Cars"})
 
-from IPython.display import Markdown
-Markdown(result)
+print(result)
