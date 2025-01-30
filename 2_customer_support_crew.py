@@ -8,13 +8,10 @@ load_dotenv()
 
 # llm_openAi= ChatOpenAI(model="gpt-4o")
 # llm = ChatGroq(model="llama3-8b-8192")
-llm = LLM(
-    model="llama3-8b-8192",
-    base_url="https://api.groq.com/openai/v1",
-    api_key=os.getenv("GROQ_API_KEY"),
-)
+llm = LLM(model="openrouter/meta-llama/llama-3.1-70b-instruct:free", api_key=os.getenv("OPENROUTER_API_KEY"))
 # print(llm.invoke("Hello, how are you?"))
 support_agent = Agent(
+    llm=llm,
     role="Senior Support Representative",
 	goal="Be the most friendly and helpful "
         "support representative in your team",
@@ -28,9 +25,10 @@ support_agent = Agent(
         " and make no assumptions."
 	),
 	allow_delegation=False,
-	verbose=True
+	verbose=True,
 )
 support_quality_assurance_agent = Agent(
+    llm=llm,
 	role="Support Quality Assurance Specialist",
 	goal="Get recognition for providing the "
     "best support quality assurance in your team",
@@ -44,7 +42,8 @@ support_quality_assurance_agent = Agent(
         "is providing full"
 		"complete answers, and make no assumptions."
 	),
-	verbose=True
+	verbose=True,
+   
 )
 
 
@@ -102,13 +101,15 @@ quality_assurance_review = Task(
 	    "but maintain a professional and friendly tone throughout."
     ),
     agent=support_quality_assurance_agent,
+    
 )
 
 crew = Crew(
   agents=[support_agent, support_quality_assurance_agent],
   tasks=[inquiry_resolution, quality_assurance_review],
   verbose=True,
-  memory=True
+  memory=True,
+  
 )
 
 inputs = {
